@@ -1,0 +1,373 @@
+{
+  "name": "scripto-studio-pro",
+  "displayName": "ScriptO Studio Pro",
+  "description": "ScriptO Studio Pro - MicroPython development via WebREPL for ESP32 - Works on vscode.dev and iPad",
+  "version": "0.1.2",
+  "publisher": "jetpax",
+  "license": "AGPL-3.0",
+  "icon": "media/icon.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Other"
+  ],
+  "keywords": [
+    "micropython",
+    "esp32",
+    "webrepl",
+    "embedded",
+    "iot"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onView:micropythonDeviceFiles",
+    "onView:micropythonAIAgent"
+  ],
+  "browser": "./dist/web/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "scripto-studio-pro",
+          "title": "ScriptO Studio",
+          "icon": "media/board.svg"
+        }
+      ],
+      "secondary": [
+        {
+          "id": "scripto-studio-pro-ai",
+          "title": "AI Agent",
+          "icon": "$(hubot)"
+        }
+      ]
+    },
+    "views": {
+      "scripto-studio-pro": [
+        {
+          "id": "micropythonDeviceFiles",
+          "name": "Device Files"
+        },
+        {
+          "type": "webview",
+          "id": "micropythonTerminal",
+          "name": "Terminal"
+        }
+      ],
+      "scripto-studio-pro-ai": [
+        {
+          "type": "webview",
+          "id": "micropythonAIAgent",
+          "name": "AI Agent"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "micropython.connect",
+        "title": "Connect to Device",
+        "category": "ScriptO Studio",
+        "icon": "$(plug)"
+      },
+      {
+        "command": "micropython.disconnect",
+        "title": "Disconnect from Device",
+        "category": "ScriptO Studio",
+        "icon": "$(debug-disconnect)"
+      },
+      {
+        "command": "micropython.reconnect",
+        "title": "Reconnect to Device",
+        "category": "MicroPython"
+      },
+      {
+        "command": "micropython.uploadFile",
+        "title": "Upload File to Device",
+        "category": "ScriptO Studio",
+        "icon": "$(cloud-upload)"
+      },
+      {
+        "command": "micropython.downloadFile",
+        "title": "Download File from Device",
+        "category": "ScriptO Studio",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "micropython.deleteFile",
+        "title": "Delete File from Device",
+        "category": "ScriptO Studio",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "micropython.renameFile",
+        "title": "Rename File on Device",
+        "category": "ScriptO Studio",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "micropython.createFile",
+        "title": "Create New File on Device",
+        "category": "ScriptO Studio",
+        "icon": "$(new-file)"
+      },
+      {
+        "command": "micropython.createFolder",
+        "title": "Create New Folder on Device",
+        "category": "ScriptO Studio",
+        "icon": "$(new-folder)"
+      },
+      {
+        "command": "micropython.refreshFiles",
+        "title": "Refresh Device Files",
+        "category": "ScriptO Studio",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "micropython.runCurrentFile",
+        "title": "Run Current File on Device",
+        "category": "ScriptO Studio",
+        "icon": "$(debug-start)"
+      },
+      {
+        "command": "micropython.stopExecution",
+        "title": "Stop Execution",
+        "category": "ScriptO Studio",
+        "icon": "$(debug-stop)"
+      },
+      {
+        "command": "micropython.addScripto",
+        "title": "Add Scripto",
+        "category": "ScriptO Studio",
+        "icon": "$(folder-library)"
+      },
+      {
+        "command": "micropython.runSelection",
+        "title": "Run Selection on Device",
+        "category": "MicroPython"
+      },
+      {
+        "command": "micropython.interrupt",
+        "title": "Interrupt Execution (Ctrl+C)",
+        "category": "ScriptO Studio",
+        "icon": "$(debug-stop)"
+      },
+      {
+        "command": "micropython.showTerminal",
+        "title": "Show Terminal",
+        "category": "MicroPython"
+      },
+      {
+        "command": "micropython.clearTerminal",
+        "title": "Clear Terminal",
+        "category": "ScriptO Studio",
+        "icon": "$(clear-all)"
+      },
+      {
+        "command": "micropython.showDeviceUI",
+        "title": "Show Device UI",
+        "category": "MicroPython"
+      },
+      {
+        "command": "micropython.closeDeviceUI",
+        "title": "Close Device UI",
+        "category": "MicroPython"
+      },
+      {
+        "command": "micropython.showSystem",
+        "title": "Show System",
+        "category": "ScriptO Studio",
+        "icon": "$(settings-gear)"
+      },
+      {
+        "command": "micropython.toggleAIAgent",
+        "title": "AI Agent",
+        "category": "ScriptO Studio",
+        "icon": "$(hubot)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "micropython.connect",
+          "when": "view == micropythonTerminal",
+          "group": "navigation@1",
+          "icon": "$(plug)"
+        },
+        {
+          "command": "micropython.clearTerminal",
+          "when": "view == micropythonTerminal",
+          "group": "navigation@2",
+          "icon": "$(clear-all)"
+        },
+        {
+          "command": "micropython.refreshFiles",
+          "when": "view == micropythonDeviceFiles",
+          "group": "navigation@1",
+          "icon": "$(refresh)"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "micropython.addScripto",
+          "group": "navigation",
+          "icon": "$(folder-library)"
+        },
+        {
+          "command": "micropython.toggleAIAgent",
+          "group": "navigation",
+          "icon": "$(hubot)"
+        },
+        {
+          "command": "micropython.showSystem",
+          "group": "navigation",
+          "icon": "$(settings-gear)"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "micropython.downloadFile",
+          "when": "view == micropythonDeviceFiles && viewItem == file",
+          "group": "1_file@1"
+        },
+        {
+          "command": "micropython.renameFile",
+          "when": "view == micropythonDeviceFiles && viewItem == file",
+          "group": "1_file@2"
+        },
+        {
+          "command": "micropython.deleteFile",
+          "when": "view == micropythonDeviceFiles && viewItem == file",
+          "group": "1_file@3"
+        },
+        {
+          "command": "micropython.deleteFile",
+          "when": "view == micropythonDeviceFiles && viewItem == folder",
+          "group": "1_file@3"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "micropython.runCurrentFile",
+          "when": "editorLangId == python",
+          "group": "micropython@1"
+        },
+        {
+          "command": "micropython.runSelection",
+          "when": "editorLangId == python && editorHasSelection",
+          "group": "micropython@2"
+        }
+      ],
+      "editor/title/run": [
+        {
+          "command": "micropython.runCurrentFile",
+          "when": "editorLangId == python && micropython.connected && !micropython.executing",
+          "group": "navigation@1",
+          "preferred": true
+        },
+        {
+          "command": "micropython.stopExecution",
+          "when": "editorLangId == python && micropython.connected && micropython.executing",
+          "group": "navigation@1"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "micropython.runCurrentFile",
+        "key": "ctrl+shift+enter",
+        "mac": "cmd+shift+enter",
+        "when": "editorLangId == python"
+      },
+      {
+        "command": "micropython.interrupt",
+        "key": "ctrl+c",
+        "mac": "cmd+c",
+        "when": "terminalFocus"
+      }
+    ],
+    "configuration": {
+      "title": "ScriptO Studio Pro",
+      "properties": {
+        "micropython.defaultIP": {
+          "type": "string",
+          "default": "192.168.4.1",
+          "description": "Default IP address for WebREPL connection"
+        },
+        "micropython.defaultPassword": {
+          "type": "string",
+          "default": "",
+          "description": "Default WebREPL password (leave empty to prompt)"
+        },
+        "micropython.autoConnect": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically connect on startup"
+        },
+        "micropython.ai.provider": {
+          "type": "string",
+          "enum": [
+            "openai",
+            "anthropic",
+            "grok",
+            "openrouter",
+            "custom"
+          ],
+          "default": "openai",
+          "description": "AI service provider for code generation"
+        },
+        "micropython.ai.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "API key for the selected AI provider"
+        },
+        "micropython.ai.model": {
+          "type": "string",
+          "default": "gpt-4o",
+          "description": "AI model to use for code generation"
+        },
+        "micropython.ai.endpoint": {
+          "type": "string",
+          "default": "",
+          "description": "Custom API endpoint URL (for custom provider)"
+        },
+        "micropython.ai.systemPrompt": {
+          "type": "string",
+          "default": "",
+          "description": "Custom system prompt for AI agent (leave empty for default MicroPython expert prompt)"
+        },
+        "micropython.terminalFontSize": {
+          "type": "number",
+          "default": 14,
+          "description": "Terminal font size"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package-web",
+    "compile-web": "webpack",
+    "watch-web": "webpack --watch",
+    "package-web": "webpack --mode production --devtool hidden-source-map",
+    "lint": "eslint src --ext ts",
+    "test": "echo \"No tests yet\""
+  },
+  "devDependencies": {
+    "@types/node": "^20.x",
+    "@types/vscode": "^1.85.0",
+    "@types/webpack-env": "^1.18.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.50.0",
+    "path-browserify": "^1.0.1",
+    "process": "^0.11.10",
+    "ts-loader": "^9.5.0",
+    "typescript": "^5.2.0",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.0"
+  },
+  "dependencies": {
+    "xterm": "^5.3.0",
+    "xterm-addon-fit": "^0.8.0"
+  }
+}
