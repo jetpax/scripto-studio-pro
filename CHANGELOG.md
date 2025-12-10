@@ -1,49 +1,86 @@
-# Change Log
+# Changelog
 
-All notable changes to the "MicroPython WebREPL" extension will be documented in this file.
+All notable changes to the ScriptO Studio Pro extension will be documented in this file.
 
-## [0.1.0] - 2025-01-XX
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Added
+- **Debug Adapter Protocol (DAP) support** - Full debugging capabilities
+  - Set breakpoints in Python files
+  - Step over/into/out execution
+  - Continue/pause execution
+  - Launch and attach modes
+  - Debug toolbar integration
+  - Stack trace support (requires device implementation)
+  - Variable inspection (requires device implementation)
+
+- **WebREPL CB Protocol support** - CBOR-based channelized protocol
+  - TFTP file transfers (4KB blocks, faster than legacy)
+  - Channel-based message routing
+  - Protocol negotiation and auto-fallback
+  - Directory operations via CBOR messages
+  - Backward compatible with legacy WebREPL
+
+- **Protocol Multiplexing** - Single WebSocket, multiple protocols
+  - TEXT frames (opcode 0x01) → DAP
+  - BINARY frames (opcode 0x02) → WebREPL CB or Legacy
+  - Automatic protocol detection and routing
+
+- **New protocol handlers**
+  - `src/protocols/types.ts` - Protocol type definitions
+  - `src/protocols/webREPLCB.ts` - WebREPL CB CBOR handler
+  - `src/debug/dapHandler.ts` - DAP message handler
+  - `src/debug/adapter.ts` - VS Code debug adapter integration
+
+- **Debug configuration snippets** in `launch.json`
+  - Launch script with debugging
+  - Attach to running interpreter
+
+### Changed
+- `src/webrepl/connection.ts` - Added protocol discrimination
+- `package.json` - Added debugger contribution and CBOR dependency
+- `src/extension.ts` - Registered debug adapter factory
+
+### Documentation
+- `IMPLEMENTATION_PLAN.md` - Complete implementation roadmap
+- `MIGRATION_SUMMARY.md` - Summary of changes and testing guide
+- Updated README with debugging features
+- Cross-referenced protocol specifications in webrepl repository
+
+## [0.1.2] - 2025-01-XX
 
 ### Initial Release
+- WebREPL connection management
+- Terminal with interactive REPL
+- File browser for device filesystem
+- Run code directly from editor
+- ScriptO integration
+- Device UI display via iframe
+- Auto-INFO status bar
+- Works on vscode.dev and iPad Safari
 
-#### Features
-- WebREPL connection to MicroPython devices via WebSocket
-- Device file tree view in sidebar
-- File operations: upload, download, create, delete, rename
-- Integrated xterm.js terminal with REPL
-- Run current file or selection on device
-- Device UI iframe support (DISPLAY-UI command)
-- Status bar with connection indicator
-- Real-time device status updates (AUTO-INFO broadcast)
-- FileSystemProvider for device files (webrepl:// URI scheme)
-- Full support for vscode.dev and iPad Safari
-- Configuration settings for default IP, password, auto-connect
+---
 
-#### Architecture
-- Ported from Scripto Studio web app
-- Pure TypeScript implementation
-- Web extension compatible (no Node.js dependencies)
-- Event-driven WebREPL protocol implementation
-- RAW REPL mode for reliable code execution
-- Binary protocol for file transfers
+## Version Guidelines
 
-#### Browser Compatibility
-- Chrome/Chromium ✅
-- Firefox ✅
-- Safari (macOS and iPad) ✅
-- Edge ✅
+- **Major (X.0.0)**: Breaking changes, major feature additions
+- **Minor (0.X.0)**: New features, backward compatible
+- **Patch (0.0.X)**: Bug fixes, minor improvements
 
-### Known Limitations
-- No offline file caching yet
-- Terminal history not persisted between sessions
-- Large file transfers may be slow over WiFi
+## Feature Status
 
-### Future Plans
-- Connection history and quick connect
-- Snippet library for common MicroPython code
-- Device discovery via mDNS
-- File diffing and sync
-- Terminal command history persistence
-- Multiple device connections
+- ✅ **Stable**: Production-ready, fully tested
+- 🚧 **Beta**: Implemented but needs more testing
+- ⏳ **Planned**: On roadmap, not yet implemented
+- ❌ **Deprecated**: No longer supported
 
+## Contributing
 
+When adding features:
+1. Update this CHANGELOG
+2. Follow [Keep a Changelog](https://keepachangelog.com/) format
+3. Document breaking changes clearly
+4. Include migration guide if needed

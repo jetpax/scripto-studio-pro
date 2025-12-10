@@ -36,6 +36,7 @@ import { scanScriptOsFiles } from './scriptos/scanner';
 import { generateScriptOsCode } from './scriptos/parser';
 import { ScriptOConfigWebviewProvider } from './webview/scriptoConfig';
 import { AIAgentWebviewProvider } from './webview/aiAgent';
+import { MicroPythonDebugAdapterFactory, MicroPythonDebugConfigProvider } from './debug/adapter';
 
 let connection: WebREPLConnection;
 let bridgeWebview: WebREPLBridgeWebview;
@@ -154,6 +155,26 @@ export function activate(extensionContext: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider('micropythonAIAgent', aiAgentProvider)
 	);
+
+	// Register debug adapter for MicroPython debugging
+	const debugAdapterFactory = new MicroPythonDebugAdapterFactory(connection);
+	context.subscriptions.push(
+		vscode.debug.registerDebugAdapterDescriptorFactory(
+			'micropython-esp32',
+			debugAdapterFactory
+		)
+	);
+
+	// Register debug configuration provider
+	const debugConfigProvider = new MicroPythonDebugConfigProvider();
+	context.subscriptions.push(
+		vscode.debug.registerDebugConfigurationProvider(
+			'micropython-esp32',
+			debugConfigProvider
+		)
+	);
+
+	outputChannel.appendLine('Debug adapter registered for micropython-esp32');
 
 	// Register commands
 	registerCommands(context);
@@ -961,4 +982,3 @@ export function deactivate() {
 		connection.disconnect();
 	}
 }
-

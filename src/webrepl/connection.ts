@@ -19,6 +19,9 @@
  */
 
 import * as vscode from 'vscode';
+import { detectProtocol, ProtocolType } from '../protocols/types';
+import { WebREPLCBHandler } from '../protocols/webREPLCB';
+import { DAPHandler } from '../debug/dapHandler';
 
 type WebREPLState = 'DISCONNECTED' | 'CONNECTING' | 'AUTHENTICATING' | 'CONNECTED';
 type REPLState = 'IDLE' | 'ENTERING_RAW' | 'RAW_REPL_READY' | 'WAITING_OK' | 'RUNNING' | 'GOT_FIRST_EOF';
@@ -43,9 +46,35 @@ export class WebREPLConnection {
 	private outputChannel: any = null; // vscode.OutputChannel
 	private bridgeWebview: any = null; // WebREPLBridgeWebview - will be set by extension
 	
+	// Protocol handlers
+	private wcbHandler: WebREPLCBHandler | null = null;
+	private dapHandler: DAPHandler | null = null;
+	private wcbEnabled: boolean = false;
+	
 	constructor(outputChannel?: any, bridgeWebview?: any) {
 		this.outputChannel = outputChannel;
 		this.bridgeWebview = bridgeWebview;
+		
+		// Initialize protocol handlers
+		this.wcbHandler = new WebREPLCBHandler();
+		this.wcbHandler.setSendCallback((data) => this._sendBinary(data));
+		
+		this.dapHandler = new DAPHandler();
+		this.dapHandler.setSendCallback((message) => this._sendText(message));
+	}
+	
+	/**
+	 * Get DAP handler (for debug adapter)
+	 */
+	getDAPHandler(): DAPHandler | null {
+		return this.dapHandler;
+	}
+	
+	/**
+	 * Get WebREPL CB handler
+	 */
+	getWCBHandler(): WebREPLCBHandler | null {
+		return this.wcbHandler;
 	}
 
 	setBridgeWebview(bridge: any) {
@@ -337,8 +366,16 @@ export class WebREPLConnection {
 				if (data.indexOf('raw REPL') !== -1) {
 					this.log('[WebREPL] Already in RAW REPL mode');
 					this.replState = 'RAW_REPL_READY';
-					this._onConnected.fire();
-					resolve();
+					
+					// Probe for WebREPL CB support
+					this._probeProtocols().then(() => {
+						this._onConnected.fire();
+						resolve();
+					}).catch(() => {
+						// Fallback to legacy
+						this._onConnected.fire();
+						resolve();
+					});
 				} else {
 					// Need to enter RAW REPL mode
 					this.log('[WebREPL] Entering RAW REPL mode');
@@ -353,8 +390,16 @@ export class WebREPLConnection {
 						if (this.replState === 'RAW_REPL_READY') {
 							clearInterval(checkReady);
 							this.log('[WebREPL] Connection complete - in RAW REPL mode');
-							this._onConnected.fire();
-							resolve();
+							
+							// Probe for WebREPL CB support
+							this._probeProtocols().then(() => {
+								this._onConnected.fire();
+								resolve();
+							}).catch(() => {
+								// Fallback to legacy
+								this._onConnected.fire();
+								resolve();
+							});
 						}
 					}, 100);
 				}
@@ -370,17 +415,79 @@ export class WebREPLConnection {
 	}
 
 	/**
-	 * Handle incoming WebSocket messages
+	 * Send binary data (for WebREPL CB or legacy)
+	 */
+	private _sendBinary(data: Uint8Array): void {
+		if (this.bridgeWebview) {
+			// TODO: Send via bridge
+			console.warn('[WebREPL] Bridge sending not implemented for binary');
+		} else if (this.websocket && this.webreplState === 'CONNECTED') {
+			this.websocket.send(data);
+		}
+	}
+	
+	/**
+	 * Send text data (for DAP)
+	 */
+	private _sendText(message: string): void {
+		if (this.bridgeWebview) {
+			// TODO: Send via bridge
+			console.warn('[WebREPL] Bridge sending not implemented for text');
+		} else if (this.websocket && this.webreplState === 'CONNECTED') {
+			this.websocket.send(message);
+		}
+	}
+	
+	/**
+	 * Handle incoming WebSocket messages with protocol discrimination
 	 */
 	private _onWebSocketMessage(rawData: string | ArrayBuffer): void {
-		// Handle binary data (file transfer)
-		if (rawData instanceof ArrayBuffer) {
-			this._handleBinaryMessage(new Uint8Array(rawData));
+		// TEXT frames (opcode 0x01)
+		if (typeof rawData === 'string') {
+			const protocol = detectProtocol(rawData);
+			
+			// DAP Protocol (Content-Length header)
+			if (protocol === ProtocolType.DAP && this.dapHandler) {
+				this.log('[WebSocket] Routing to DAP handler');
+				this.dapHandler.handleMessage(rawData);
+				return;
+			}
+			
+			// Fall through to existing REPL/JSON logic for non-DAP text
+			const textData = rawData;
+			this._handleTextMessage(textData);
 			return;
 		}
-
-		// Handle text data
-		const textData = rawData as string;
+		
+		// BINARY frames (opcode 0x02)
+		if (rawData instanceof ArrayBuffer) {
+			const data = new Uint8Array(rawData);
+			const protocol = detectProtocol(rawData);
+			
+			// WebREPL CB (CBOR)
+			if (protocol === ProtocolType.WEBREPL_CB && this.wcbHandler) {
+				this.log('[WebSocket] Routing to WebREPL CB handler');
+				this.wcbHandler.handleMessage(data);
+				return;
+			}
+			
+			// Legacy WebREPL (WA/WB)
+			if (protocol === ProtocolType.LEGACY_WEBREPL) {
+				this.log('[WebSocket] Routing to legacy handler');
+				this._handleBinaryMessage(data);
+				return;
+			}
+			
+			// Unknown binary protocol
+			this.logError('[WebSocket] Unknown binary protocol');
+			return;
+		}
+	}
+	
+	/**
+	 * Handle text messages (existing REPL/JSON logic)
+	 */
+	private _handleTextMessage(textData: string): void {
 
 		// Try to parse as JSON command response
 		try {
@@ -906,6 +1013,17 @@ except Exception as e:
 	 * Rename/move file
 	 */
 	async rename(oldPath: string, newPath: string): Promise<void> {
+		// Try WebREPL CB first
+		if (this.wcbEnabled && this.wcbHandler) {
+			try {
+				await this.wcbHandler.rename(oldPath, newPath);
+				return;
+			} catch (error) {
+				this.logError('[WebREPL] WCB rename failed, falling back to legacy');
+			}
+		}
+		
+		// Fallback to legacy (Python code execution)
 		const code = `
 import os
 try:
@@ -916,5 +1034,30 @@ except Exception as e:
 `;
 		await this.execRaw(code, true);
 	}
+	
+	/**
+	 * Probe for protocol support after connection
+	 */
+	private async _probeProtocols(): Promise<void> {
+		if (!this.wcbHandler) {
+			return;
+		}
+		
+		try {
+			this.log('[WebREPL] Probing for WebREPL CB support...');
+			await this.wcbHandler.probe();
+			this.wcbEnabled = true;
+			this.log('[WebREPL] WebREPL CB protocol available');
+		} catch (error) {
+			this.wcbEnabled = false;
+			this.log('[WebREPL] WebREPL CB not available, using legacy protocol');
+		}
+	}
+	
+	/**
+	 * Check if WebREPL CB is enabled
+	 */
+	isWCBEnabled(): boolean {
+		return this.wcbEnabled;
+	}
 }
-
