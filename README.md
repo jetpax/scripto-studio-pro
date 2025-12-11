@@ -10,7 +10,7 @@ VS Code extension for MicroPython development via WebREPL. Works on vscode.dev a
 - **▶️ Run Code** directly from editor (no save required)
 - **🐛 Debug** with breakpoints, stepping, and variable inspection (NEW!)
 - **📦 Protocol Support:**
-  - WebREPL CB (CBOR-based, channelized)
+  - WebREPL CB (WBP)
   - Debug Adapter Protocol (DAP) over WebSocket
   - Legacy WebREPL (backward compatible)
 - **🎨 ScriptO Integration** - Add ScriptOs from workspace
@@ -158,7 +158,7 @@ See [MIGRATION_SUMMARY.md](MIGRATION_SUMMARY.md) for detailed implementation not
 - [MIGRATION_SUMMARY.md](MIGRATION_SUMMARY.md) - What's been implemented
 - [../webrepl/](../webrepl/) - Protocol specifications
   - `dap_websocket_advocacy.md` - Why DAP over WebSocket
-  - `webrepl_cb_rfc.md` - WebREPL CB protocol spec
+  - `webrepl_cb_rfc.md` - WebREPL Binary Protocol spec
   - `docs/VSCODE_INTEGRATION.md` - VS Code integration guide
 
 ## Contributing

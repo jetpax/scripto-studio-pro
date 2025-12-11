@@ -3,7 +3,7 @@
 ## Overview
 
 Enhance scripto-studio-pro to support:
-1. **WebREPL CB protocol** (CBOR, channels) - Enhanced file ops, M2M
+1. **WebREPL Binary Protocol** (CBOR, channels) - Enhanced file ops, M2M
 2. **Debug Adapter Protocol** (DAP) - Native debugging in VS Code
 
 **Key Insight:** Use WebSocket opcode multiplexing:
@@ -22,7 +22,7 @@ Enhance scripto-studio-pro to support:
 - Command palette integration
 
 ❌ **Missing:**
-- WebREPL CB protocol (CBOR, channels)
+- WebREPL Binary Protocol (CBOR, channels)
 - Debug Adapter Protocol support
 - Protocol discrimination by opcode
 - Breakpoint management
@@ -94,7 +94,7 @@ private _onWebSocketMessage(rawData: string | ArrayBuffer): void {
 }
 ```
 
-## Phase 2: WebREPL CB Protocol (Days 3-5)
+## Phase 2: WebREPL Binary Protocol (Days 3-5)
 
 ### 2.1 Create WebREPL CB Handler
 
@@ -149,7 +149,7 @@ async connect(wsUrl: string, password: string): Promise<void> {
     try {
         await this.wcbHandler.probe();
         this.wcbEnabled = true;
-        console.log('[WebREPL] WebREPL CB protocol available');
+        console.log('[WebREPL] WebREPL Binary Protocol available');
     } catch {
         this.wcbEnabled = false;
         console.log('[WebREPL] Using legacy protocol');
@@ -414,7 +414,7 @@ export function activate(context: vscode.ExtensionContext) {
 ### 4.4 Documentation
 
 **Files to create:**
-- `docs/WEBREPL_CB.md` - WebREPL CB protocol usage
+- `docs/WEBREPL_CB.md` - WebREPL Binary Protocol usage
 - `docs/DEBUGGING.md` - Debugging guide
 - `docs/PROTOCOL_MIGRATION.md` - Legacy → WCB migration
 

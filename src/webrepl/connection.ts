@@ -1047,7 +1047,7 @@ except Exception as e:
 			this.log('[WebREPL] Probing for WebREPL CB support...');
 			await this.wcbHandler.probe();
 			this.wcbEnabled = true;
-			this.log('[WebREPL] WebREPL CB protocol available');
+			this.log('[WebREPL] WebREPL Binary Protocol available');
 		} catch (error) {
 			this.wcbEnabled = false;
 			this.log('[WebREPL] WebREPL CB not available, using legacy protocol');

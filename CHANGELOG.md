@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Stack trace support (requires device implementation)
   - Variable inspection (requires device implementation)
 
-- **WebREPL CB Protocol support** - CBOR-based channelized protocol
+- **WebREPL Binary Protocol support** - CBOR-based channelized protocol
   - TFTP file transfers (4KB blocks, faster than legacy)
   - Channel-based message routing
   - Protocol negotiation and auto-fallback

@@ -11,14 +11,14 @@
  */
 
 //=============================================================================
-// WebREPL CB Protocol (CBOR-based, Channelized)
+// WebREPL Binary Protocol (WBP)
 //=============================================================================
 
 /**
- * WebREPL CB protocol version
+ * WebREPL Binary Protocol version
  */
 export const WEBREPL_CB_VERSION = '1.0';
-export const WEBREPL_CB_SUBPROTOCOL = 'webrepl.cb.v1';
+export const WEBREPL_CB_SUBPROTOCOL = 'webrepl.binary.v1';
 
 /**
  * WebREPL CB Channel Assignments

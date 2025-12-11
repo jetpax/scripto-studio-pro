@@ -56,7 +56,7 @@
 - ✅ Protocol detection (DAP, WCB, Legacy)
 - ✅ Message routing to appropriate handlers
 
-**WebREPL CB Protocol:**
+**WebREPL Binary Protocol:**
 - ✅ Channel-based message handling
 - ✅ TFTP file transfer (read/write)
 - ✅ Directory operations (list, delete, mkdir, rename)
@@ -85,7 +85,7 @@
 
 **WebREPL CB Device Support:**
 - ⏳ ESP32 needs `modwebDAP.c` (from webrepl repository)
-- ⏳ ESP32 needs WebREPL CB protocol implementation
+- ⏳ ESP32 needs WebREPL Binary Protocol implementation
 - ⏳ Protocol negotiation/probing
 
 ## 📋 Next Steps
@@ -220,7 +220,7 @@ Enable logging in Browser DevTools:
 ### What Needs Device Support
 
 ⏳ Actual debugging (requires `sys.settrace()`)
-⏳ WebREPL CB protocol (requires device implementation)
+⏳ WebREPL Binary Protocol (requires device implementation)
 ⏳ File operations via TFTP (requires channel handler)
 
 ## 📊 Architecture Diagram
@@ -297,7 +297,7 @@ When device support is added, you'll know it's working when:
 - [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) - Full implementation roadmap
 - [dap_websocket_advocacy.md](../webrepl/dap_websocket_advocacy.md) - Design rationale
 - [VSCODE_INTEGRATION.md](../webrepl/docs/VSCODE_INTEGRATION.md) - VS Code setup guide
-- [webrepl_cb_rfc.md](../webrepl/webrepl_cb_rfc.md) - WebREPL CB protocol spec
+- [webrepl_cb_rfc.md](../webrepl/webrepl_cb_rfc.md) - WebREPL Binary Protocol spec
 
 ## 🚀 Ready to Test!
 

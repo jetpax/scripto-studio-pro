@@ -94,7 +94,7 @@ The **ESP32 device** needs these C modules:
    - Manages breakpoints
    - Controls execution (step, continue, pause)
 
-2. **WebREPL CB Protocol** (spec in `/Users/jep/github/webrepl/webrepl_cb_rfc.md`)
+2. **WebREPL Binary Protocol** (spec in `/Users/jep/github/webrepl/webrepl_cb_rfc.md`)
    - CBOR message handling on channels
    - TFTP file transfer support
    - Channel routing

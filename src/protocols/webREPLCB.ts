@@ -25,7 +25,7 @@ import {
 type ChannelCallback = (opcode: number, fields: any[]) => void;
 
 /**
- * WebREPL CB Protocol Handler
+ * WebREPL Binary Protocol Handler
  */
 export class WebREPLCBHandler {
     private channelCallbacks = new Map<number, ChannelCallback[]>();
